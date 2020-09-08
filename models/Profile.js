@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-//TODO: clean up un needed properties
+//TODO: clean up un needed properties, and test
 const ProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
