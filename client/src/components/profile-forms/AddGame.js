@@ -2,9 +2,9 @@ import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addEducation } from '../../actions/profile';
+import { addGame } from '../../actions/profile';
 
-const AddEducation = ({ addEducation, history }) => {
+const AddGame = ({ addGame, history }) => {
   const [formData, setFormData] = useState({
     title: '',
     status: 'backlog',
@@ -30,7 +30,7 @@ const AddEducation = ({ addEducation, history }) => {
         className="form"
         onSubmit={(e) => {
           e.preventDefault();
-          addEducation(formData, history);
+          addGame(formData, history);
         }}
       >
         <div className="form-group">
@@ -99,8 +99,8 @@ const AddEducation = ({ addEducation, history }) => {
   );
 };
 
-AddEducation.propTypes = {
-  addEducation: PropTypes.func.isRequired
+AddGame.propTypes = {
+  addGame: PropTypes.func.isRequired
 };
 
-export default connect(null, { addEducation })(AddEducation);
+export default connect(null, { addGame: addGame })(AddGame);
