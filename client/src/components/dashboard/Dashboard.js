@@ -19,15 +19,15 @@ const Dashboard = ({
 
   return (
     <Fragment>
-      <h1 className="large text-primary">Dashboard</h1>
+      <h1 className="large text-primary">Dashboard!!</h1>
       <p className="lead">
         <i className="fas fa-user" /> Welcome {user && user.name}
       </p>
       {profile !== null ? (
         <Fragment>
           <DashboardActions />
-          <Experience experience={profile.experience} />
-          <Education education={profile.education} />
+          {/* <Experience experience={profile.experience} />
+          <Education education={profile.education} /> */}
 
           <div className="my-2">
             <button className="btn btn-danger" onClick={() => deleteAccount()}>
