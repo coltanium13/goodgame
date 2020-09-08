@@ -2,8 +2,22 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { deleteGame } from '../../actions/profile';
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Button } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+
+//TODO: use material Table
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    margin: theme.spacing(1)
+  }
+}));
 
 const Game = ({ games, deleteGame }) => {
+  const classes = useStyles();
+
   const gameTable =
     games.length > 0 ? (
       games.map((game) => (
@@ -15,12 +29,26 @@ const Game = ({ games, deleteGame }) => {
           </td>
           <td className="hide-sm">{game.notes}</td>
           <td>
-            <button
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              startIcon={<EditIcon />}
+              onClick={() => console.log('Edit Game Clicked')}
+            >
+              Edit
+            </Button>
+          </td>
+          <td>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.button}
+              startIcon={<DeleteIcon />}
               onClick={() => deleteGame(game._id)}
-              className="btn btn-danger"
             >
               Delete
-            </button>
+            </Button>
           </td>
         </tr>
       ))
@@ -38,6 +66,7 @@ const Game = ({ games, deleteGame }) => {
             <th className="hide-sm">Status</th>
             <th className="hide-sm">Image</th>
             <th className="hide-sm">Notes</th>
+            <th />
             <th />
           </tr>
         </thead>

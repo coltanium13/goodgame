@@ -6,6 +6,15 @@ import DashboardActions from './DashboardActions';
 import Experience from './Experience';
 import Game from './Game';
 import { getCurrentProfile, deleteAccount } from '../../actions/profile';
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Button } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    margin: theme.spacing(1)
+  }
+}));
 
 const Dashboard = ({
   getCurrentProfile,
@@ -13,6 +22,8 @@ const Dashboard = ({
   auth: { user },
   profile: { profile }
 }) => {
+  const classes = useStyles();
+
   useEffect(() => {
     getCurrentProfile();
   }, [getCurrentProfile]);
@@ -29,11 +40,19 @@ const Dashboard = ({
           {/* <Experience experience={profile.experience} /> */}
           <Game games={profile.games} />
 
-          <div className="my-2">
-            <button className="btn btn-danger" onClick={() => deleteAccount()}>
-              <i className="fas fa-user-minus" /> Delete My Account
-            </button>
-          </div>
+          <Grid container>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.button}
+                startIcon={<DeleteIcon />}
+                onClick={() => deleteAccount()}
+              >
+                Delete My Account
+              </Button>
+            </Grid>
+          </Grid>
         </Fragment>
       ) : (
         <Fragment>
