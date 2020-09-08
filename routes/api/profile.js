@@ -35,71 +35,120 @@ router.get('/me', auth, async (req, res) => {
 // @route    POST api/profile
 // @desc     Create or update user profile
 // @access   Private
-router.post(
-  '/',
-  [
-    auth,
-    [
-      check('status', 'Status is required').not().isEmpty(),
-      check('skills', 'Skills is required').not().isEmpty()
-    ]
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const {
-      company,
-      location,
-      website,
-      bio,
-      skills,
-      status,
-      githubusername,
-      youtube,
-      twitter,
-      instagram,
-      linkedin,
-      facebook
-    } = req.body;
+// router.post(
+//   '/',
+//   [
+//     auth,
+//     [
+//       check('status', 'Status is required').not().isEmpty(),
+//       check('skills', 'Skills is required').not().isEmpty()
+//     ]
+//   ],
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
+//     const {
+//       company,
+//       location,
+//       website,
+//       bio,
+//       skills,
+//       status,
+//       githubusername,
+//       youtube,
+//       twitter,
+//       instagram,
+//       linkedin,
+//       facebook
+//     } = req.body;
 
-    const profileFields = {
-      user: req.user.id,
-      company,
-      location,
-      website: website && website !== '' ? normalize(website, { forceHttps: true }) : '',
-      bio,
-      skills: Array.isArray(skills)
-        ? skills
-        : skills.split(',').map((skill) => ' ' + skill.trim()),
-      status,
-      githubusername
-    };
+//     const profileFields = {
+//       user: req.user.id,
+//       company,
+//       location,
+//       website:
+//         website && website !== ''
+//           ? normalize(website, { forceHttps: true })
+//           : '',
+//       bio,
+//       skills: Array.isArray(skills)
+//         ? skills
+//         : skills.split(',').map((skill) => ' ' + skill.trim()),
+//       status,
+//       githubusername
+//     };
 
-    // Build social object and add to profileFields
-    const socialfields = { youtube, twitter, instagram, linkedin, facebook };
+//     // Build social object and add to profileFields
+//     const socialfields = { youtube, twitter, instagram, linkedin, facebook };
 
-    for (const [key, value] of Object.entries(socialfields)) {
-      if (value && value.length > 0)
-        socialfields[key] = normalize(value, { forceHttps: true });
-    }
-    profileFields.social = socialfields;
+//     for (const [key, value] of Object.entries(socialfields)) {
+//       if (value && value.length > 0)
+//         socialfields[key] = normalize(value, { forceHttps: true });
+//     }
+//     profileFields.social = socialfields;
 
-    try {
-      // Using upsert option (creates new doc if no match is found):
-      let profile = await Profile.findOneAndUpdate(
-        { user: req.user.id },
-        { $set: profileFields },
-        { new: true, upsert: true, setDefaultsOnInsert: true }
-      );
-      res.json(profile);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+//     try {
+//       // Using upsert option (creates new doc if no match is found):
+//       let profile = await Profile.findOneAndUpdate(
+//         { user: req.user.id },
+//         { $set: profileFields },
+//         { new: true, upsert: true, setDefaultsOnInsert: true }
+//       );
+//       res.json(profile);
+//     } catch (err) {
+//       console.error(err.message);
+//       res.status(500).send('Server Error');
+//     }
+//   }
+// );
+
+// @route    POST api/profile
+// @desc     Create or update user profile
+// @access   Private
+router.post('/', [auth], async (req, res) => {
+  const {
+    location,
+    website,
+    bio,
+    youtube,
+    twitter,
+    instagram,
+    linkedin,
+    facebook
+  } = req.body;
+
+  const profileFields = {
+    user: req.user.id,
+    location,
+    website:
+      website && website !== '' ? normalize(website, { forceHttps: true }) : '',
+    bio
+  };
+
+  // Build social object and add to profileFields
+  const socialfields = { youtube, twitter, instagram, linkedin, facebook };
+
+  for (const [key, value] of Object.entries(socialfields)) {
+    if (value && value.length > 0)
+      socialfields[key] = normalize(value, { forceHttps: true });
   }
-);
+  profileFields.social = socialfields;
+
+  try {
+    // Using upsert option (creates new doc if no match is found):
+    let profile = await Profile.findOneAndUpdate(
+      { user: req.user.id },
+      { $set: profileFields },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 // @route    GET api/profile
 // @desc     Get all profiles
@@ -232,21 +281,20 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
   }
 });
 
-// @route    PUT api/profile/education
-// @desc     Add profile education
+// @route    PUT api/profile/game
+// @desc     Add profile game
 // @access   Private
 router.put(
-  '/education',
+  '/game',
   [
     auth,
     [
-      check('school', 'School is required').not().isEmpty(),
-      check('degree', 'Degree is required').not().isEmpty(),
-      check('fieldofstudy', 'Field of study is required').not().isEmpty(),
-      check('from', 'From date is required and needs to be from the past')
-        .not()
-        .isEmpty()
-        .custom((value, { req }) => (req.body.to ? value < req.body.to : true))
+      check('title', 'Title is required').not().isEmpty(),
+      check('status', 'Status is required').not().isEmpty()
+      // check('from', 'From date is required and needs to be from the past')
+      //   .not()
+      //   .isEmpty()
+      //   .custom((value, { req }) => (req.body.to ? value < req.body.to : true))
     ]
   ],
   async (req, res) => {
@@ -255,30 +303,20 @@ router.put(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const {
-      school,
-      degree,
-      fieldofstudy,
-      from,
-      to,
-      current,
-      description
-    } = req.body;
+    const { title, status, imageUrl, notes, finishedDate } = req.body;
 
-    const newEdu = {
-      school,
-      degree,
-      fieldofstudy,
-      from,
-      to,
-      current,
-      description
+    const newGame = {
+      title,
+      status,
+      imageUrl,
+      notes,
+      finishedDate
     };
 
     try {
       const profile = await Profile.findOne({ user: req.user.id });
 
-      profile.education.unshift(newEdu);
+      profile.games.unshift(newGame);
 
       await profile.save();
 
@@ -290,15 +328,15 @@ router.put(
   }
 );
 
-// @route    DELETE api/profile/education/:edu_id
-// @desc     Delete education from profile
+// @route    DELETE api/profile/game/:game_id
+// @desc     Delete game from profile
 // @access   Private
 
-router.delete('/education/:edu_id', auth, async (req, res) => {
+router.delete('/game/:game_id', auth, async (req, res) => {
   try {
     const foundProfile = await Profile.findOne({ user: req.user.id });
-    foundProfile.education = foundProfile.education.filter(
-      (edu) => edu._id.toString() !== req.params.edu_id
+    foundProfile.games = foundProfile.games.filter(
+      (game) => game._id.toString() !== req.params.game_id
     );
     await foundProfile.save();
     return res.status(200).json(foundProfile);
