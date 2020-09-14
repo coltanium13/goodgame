@@ -9,6 +9,9 @@ import { getCurrentProfile, deleteAccount } from '../../actions/profile';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Button } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import Spinner from '../layout/Spinner';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -16,24 +19,25 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Dashboard = ({
-  getCurrentProfile,
-  deleteAccount,
-  auth: { user },
-  profile: { profile }
-}) => {
+const Dashboard = () => {
   const classes = useStyles();
+  const { profile, loading } = useSelector((state) => state.profile);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getCurrentProfile();
+    dispatch(getCurrentProfile());
   }, [getCurrentProfile]);
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <Fragment>
       <h1 className="large text-primary">Dashboard!!</h1>
       <p className="lead">
         <i className="fas fa-user" /> Welcome {user && user.name}
       </p>
+
       {profile !== null ? (
         <Fragment>
           <DashboardActions />
@@ -47,7 +51,7 @@ const Dashboard = ({
                 color="secondary"
                 className={classes.button}
                 startIcon={<DeleteIcon />}
-                onClick={() => deleteAccount()}
+                onClick={() => dispatch(deleteAccount())}
               >
                 Delete My Account
               </Button>
@@ -66,18 +70,4 @@ const Dashboard = ({
   );
 };
 
-Dashboard.propTypes = {
-  getCurrentProfile: PropTypes.func.isRequired,
-  deleteAccount: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-  profile: state.profile
-});
-
-export default connect(mapStateToProps, { getCurrentProfile, deleteAccount })(
-  Dashboard
-);
+export default Dashboard;
