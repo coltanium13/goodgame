@@ -17,6 +17,7 @@ import './App.css';
 
 const App = () => {
   useEffect(() => {
+    console.log('In App.js UE');
     // check for token in LS and load user
     if (localStorage.token) {
       setAuthToken(localStorage.token);

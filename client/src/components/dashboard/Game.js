@@ -24,7 +24,7 @@ const Game = ({ games, deleteGame }) => {
         <tr key={game._id}>
           <td>{game.title}</td>
           <td className="hide-sm">{game.status}</td>
-          <td className="hide-sm" width="150">
+          <td className="hide-sm" width="150" height="150">
             <img src={game.imageUrl} alt={game.title} />
           </td>
           <td className="hide-sm">{game.notes}</td>
